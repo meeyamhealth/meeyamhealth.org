@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Meeyam Health Foundation is a not-for-profit Section 8 company in Punjab, India, advancing public health, nutrition, occupational health and community well-being in line with SDG 3.">
-<meta property="og:title" content="Meeyam Health Foundation (MHF)">
+<meta property="og:title" content="Meeyam Health Foundation (MYHF)">
 <meta property="og:description" content="Advancing Public Health, Sustaining One Health, Empowering Communities">
 <link rel="canonical" href="https://meeyamhealth.org/">
 <meta property="og:url" content="https://meeyamhealth.org/">
@@ -12,7 +12,7 @@
 <meta property="og:image" content="https://meeyamhealth.org/share.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"NGO","name":"Meeyam Health Foundation","alternateName":["MHF","मीयम हेल्थ फाउंडेशन"],"url":"https://meeyamhealth.org/","logo":"https://meeyamhealth.org/emblem.png","slogan":"Advancing Public Health, Sustaining One Health, Empowering Communities","description":"Not-for-profit Section 8 company in Punjab, India, working on public health, nutrition, occupational health and community well-being in line with the UN Sustainable Development Goals.","email":"meeyamhealth@gmail.com","telephone":"+91-98785-33381","areaServed":"IN","sameAs":["https://www.linkedin.com/company/meeyam-health-foundation/"],"foundingDate":"2026-09-26","identifier":"U88900PB2026NPL069882","address":{"@type":"PostalAddress","streetAddress":"H.No. 01, Street No. 01, Mohar Singh Nagar, Shivpuri","addressLocality":"Ludhiana","addressRegion":"Punjab","postalCode":"141008","addressCountry":"IN"}}
+{"@context":"https://schema.org","@type":"NGO","name":"Meeyam Health Foundation","alternateName":["MYHF","मीयम हेल्थ फाउंडेशन"],"url":"https://meeyamhealth.org/","logo":"https://meeyamhealth.org/emblem.png","slogan":"Advancing Public Health, Sustaining One Health, Empowering Communities","description":"Not-for-profit Section 8 company in Punjab, India, working on public health, nutrition, occupational health and community well-being in line with the UN Sustainable Development Goals.","email":"meeyamhealth@gmail.com","telephone":"+91-98785-33381","areaServed":"IN","sameAs":["https://www.linkedin.com/company/meeyam-health-foundation/"],"foundingDate":"2026-09-26","identifier":"U88900PB2026NPL069882","address":{"@type":"PostalAddress","streetAddress":"H.No. 01, Street No. 01, Mohar Singh Nagar, Shivpuri","addressLocality":"Ludhiana","addressRegion":"Punjab","postalCode":"141008","addressCountry":"IN"}}
 </script>
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#2C0A71">
@@ -68,7 +68,7 @@ a{color:var(--accent-text)}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:10px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--accent-text)}
-.brand img{width:46px;height:46px;background:#fff;border-radius:50%}
+.brand img{height:50px;width:auto;display:block}
 .brand b{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:.95rem;letter-spacing:.06em;line-height:1.15;display:block}
 .brand span{font-size:.78rem;color:var(--muted)}
 .nav{display:flex;gap:22px;flex-wrap:wrap}
@@ -166,7 +166,7 @@ section{padding-block:80px}
 footer{background:var(--indigo-deep);color:#D9D0F2;font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;padding-block:36px}
 footer .fb{display:flex;align-items:center;gap:14px}
-footer img{width:64px;height:64px}
+footer .fb img{height:72px;width:auto;max-width:100%}
 footer .legal{display:grid;gap:4px;max-width:62ch}footer .legal strong{color:#fff;font-weight:600}
 footer b{color:#fff;font-family:var(--display);font-stretch:125%;font-weight:800;letter-spacing:.06em;display:block}
 
@@ -265,8 +265,7 @@ dialog#poster-dialog .close{position:sticky;top:0;float:right;margin:0 0 8px;fon
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#home" aria-label="Meeyam Health Foundation, home">
-      <img src="emblem.png" alt="">
-      <div><b>MEEYAM HEALTH<br>FOUNDATION</b></div>
+      <picture><source media="(prefers-color-scheme: dark)" srcset="logo-header-dark.png"><img src="logo-header.png" alt="MYHF, Meeyam Health Foundation"></picture>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="#about">Who we are</a>
@@ -283,7 +282,7 @@ dialog#poster-dialog .close{position:sticky;top:0;float:right;margin:0 0 8px;fon
   <div class="hero">
     <div class="wrap">
       <div>
-        <div class="eyebrow">Not-for-profit · Section 8 company · India</div>
+        <div class="eyebrow">MYHF · Not-for-profit · Section 8 company · India</div>
         <h1>Good health for every person, at <em>every age.</em></h1>
         <p class="hindi" lang="hi">मीयम हेल्थ फाउंडेशन</p>
         <p class="tag">Advancing Public Health, Sustaining One Health, Empowering Communities</p>
@@ -293,7 +292,7 @@ dialog#poster-dialog .close{position:sticky;top:0;float:right;margin:0 0 8px;fon
           <a class="btn ghost" href="#work">See our focus areas</a>
         </div>
       </div>
-      <div class="seal"><img src="emblem.png" alt="Meeyam Health Foundation emblem: two people joining hands beneath a red medical cross"></div>
+      <div class="seal"><img src="emblem.png" alt="Meeyam Health Foundation seal: two people joining hands beneath a green health plus"></div>
     </div>
   </div>
 
@@ -508,7 +507,7 @@ dialog#poster-dialog .close{position:sticky;top:0;float:right;margin:0 0 8px;fon
 
 <footer>
   <div class="wrap">
-    <div class="fb"><img src="emblem-white.png" alt=""><div><b>MEEYAM HEALTH FOUNDATION</b><span lang="hi">मीयम हेल्थ फाउंडेशन</span></div></div>
+    <div class="fb"><img src="logo-footer.png" alt="MYHF, Meeyam Health Foundation"></div>
     <div class="legal">
       <p><strong>Meeyam Health Foundation</strong>, a not-for-profit company under Section 8 of the Companies Act, 2013.</p>
       <p>Registered office: H.No. 01, Street No. 01, Mohar Singh Nagar, Shivpuri, Ludhiana, Punjab 141008, India</p>
