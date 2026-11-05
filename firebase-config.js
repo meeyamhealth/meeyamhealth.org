@@ -4,12 +4,12 @@
 // is protected by the security rules (firestore.rules), not by hiding these.
 
 export const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyBvcmE2ef41Q8VQCJLcOE5zleeMPdjcMJk",
+  authDomain: "meeyam-health-4e8b5.firebaseapp.com",
+  projectId: "meeyam-health-4e8b5",
+  storageBucket: "meeyam-health-4e8b5.firebasestorage.app",
+  messagingSenderId: "754117624700",
+  appId: "1:754117624700:web:f0f183038a49f138e0daf9"
 };
 
 // Optional: Google Form links. If you add a link here, the application page
