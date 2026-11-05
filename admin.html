@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin Portal | MYHF</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<meta name="theme-color" content="#2C0A71">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800;125,800&family=Hind:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html" aria-label="Meeyam Health Foundation home"><img src="logo-header.png" alt="MYHF, Meeyam Health Foundation"></a>
+  <nav><a href="staff.html">Staff Centre</a><a id="signout" href="#" hidden>Sign out</a></nav>
+</div></header>
+
+<main><div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Admins only</div>
+    <h1>Admin Portal</h1>
+    <p class="lede">Invite staff, manage who has access, and review applications.</p>
+  </div>
+
+  <section id="v-out" class="panel" hidden>
+    <form id="login" novalidate>
+      <label for="a-email">Admin email<input id="a-email" type="email" required autocomplete="email"></label>
+      <label for="a-pass">Password<input id="a-pass" type="password" required autocomplete="current-password"></label>
+      <div class="actions"><button class="btn" type="submit">Sign in</button><a href="staff.html">Forgot password or first time? Use the Staff Centre</a></div>
+    </form>
+    <div id="login-msg" class="msg" hidden role="status"></div>
+  </section>
+
+  <section id="v-denied" class="panel" hidden>
+    <h2>Not an admin account</h2>
+    <p id="denied-text">This account doesn't have admin access. Ask an existing admin to add you, and make sure your email is verified in the Staff Centre.</p>
+  </section>
+
+  <section id="v-in" hidden>
+    <div class="tabs" role="tablist" aria-label="Admin sections">
+      <button role="tab" aria-selected="true" data-pane="apps">Applications <span id="new-count"></span></button>
+      <button role="tab" aria-selected="false" data-pane="invite">Invite staff</button>
+      <button role="tab" aria-selected="false" data-pane="people">Staff & access</button>
+      <button role="tab" aria-selected="false" data-pane="settings">Settings</button>
+    </div>
+
+    <!-- Applications -->
+    <div class="panel" id="apps" style="margin-top:16px">
+      <div class="toolbar">
+        <label for="fl-type">Type<select id="fl-type"><option value="">All</option><option value="volunteer">Volunteer</option><option value="member">Join the team</option><option value="intern">Internship</option></select></label>
+        <label for="fl-status">Status<select id="fl-status"><option value="">All</option><option>new</option><option>reviewed</option><option>shortlisted</option><option>accepted</option><option>rejected</option></select></label>
+        <button class="btn ghost small" id="refresh">Refresh</button>
+        <button class="btn ghost small" id="csv">Download CSV</button>
+      </div>
+      <div id="apps-msg" class="msg" hidden role="status"></div>
+      <ul class="list" id="apps-list"></ul>
+    </div>
+
+    <!-- Invite -->
+    <div class="panel" id="invite" hidden style="margin-top:16px">
+      <div><h2>Invite a staff member</h2><p class="lede" style="margin-top:6px">Adding someone here gives them permission to create an account. Then send them the invitation email from your Gmail.</p></div>
+      <form id="inv-form" novalidate>
+        <div class="row">
+          <label for="i-name">Full name<input id="i-name" required maxlength="100"></label>
+          <label for="i-email">Their email<input id="i-email" type="email" required maxlength="150"></label>
+        </div>
+        <label for="i-role">Role <small>Optional, e.g. Programme Coordinator</small><input id="i-role" maxlength="100"></label>
+        <label class="check"><input type="checkbox" id="i-admin">Also make this person an admin</label>
+        <div class="actions"><button class="btn" type="submit">Add invitation</button></div>
+      </form>
+      <div id="inv-msg" class="msg" hidden role="status"></div>
+      <div id="inv-send" hidden class="msg info">
+        <p><b>Step 2: send the invitation email.</b></p>
+        <div class="actions" style="margin-top:8px">
+          <a class="btn" id="gmail" target="_blank" rel="noopener">Open in Gmail</a>
+          <a class="btn ghost" id="mailto">Open in email app</a>
+          <button class="btn ghost" id="copy">Copy message</button>
+        </div>
+        <details style="margin-top:10px"><summary>See the message</summary><pre id="inv-text" style="white-space:pre-wrap;font:inherit;margin:8px 0 0"></pre></details>
+      </div>
+    </div>
+
+    <!-- People -->
+    <div class="panel" id="people" hidden style="margin-top:16px">
+      <div><h2>Invited staff</h2><p class="lede" style="margin-top:6px">Removing an invitation stops that person opening the Staff Centre. To delete their login completely, use Firebase console ▸ Authentication.</p></div>
+      <div id="people-msg" class="msg" hidden role="status"></div>
+      <ul class="list" id="people-list"></ul>
+    </div>
+
+    <!-- Settings -->
+    <div class="panel" id="settings" hidden style="margin-top:16px">
+      <div><h2>Staff files folder</h2><p class="lede" style="margin-top:6px">The name of the hidden folder that holds the staff files, from the setup guide. Staff can't see the files until this is saved.</p></div>
+      <form id="set-form" novalidate>
+        <label for="s-path">Folder name<input id="s-path" required maxlength="100" placeholder="staff-resources-…"></label>
+        <div class="actions"><button class="btn" type="submit">Save</button></div>
+      </form>
+      <div id="set-msg" class="msg" hidden role="status"></div>
+    </div>
+  </section>
+</div></main>
+<footer class="footer"><div class="wrap">Meeyam Health Foundation · Admin Portal</div></footer>
+
+<script type="module">
+import { auth, db, configured, $, $$, show, esc, setupBanner, niceError, fmtDate } from "./portal.js";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+setupBanner();
+const view = (id) => ["v-out", "v-denied", "v-in"].forEach(v => $("#" + v).hidden = v !== id);
+const TYPE = { volunteer: "Volunteer", member: "Join the team", intern: "Internship" };
+let me = "", apps = [];
+
+if (!configured) { view("v-out"); $$("form button").forEach(b => b.disabled = true); }
+else onAuthStateChanged(auth, async (user) => {
+  $("#signout").hidden = !user;
+  if (!user) return view("v-out");
+  me = (user.email || "").toLowerCase();
+  if (!user.emailVerified) { $("#denied-text").textContent = "Verify your email first: open the Staff Centre, sign in and follow the verification step."; return view("v-denied"); }
+  let ok = false; try { ok = (await getDoc(doc(db, "admins", me))).exists(); } catch (e) { console.error(e); }
+  if (!ok) return view("v-denied");
+  view("v-in"); loadApps(); loadPeople(); loadSettings();
+});
+
+$("#login").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  try { await signInWithEmailAndPassword(auth, $("#a-email").value.trim(), $("#a-pass").value); }
+  catch (err) { show($("#login-msg"), "err", niceError(err)); }
+});
+$("#signout").addEventListener("click", (e) => { e.preventDefault(); signOut(auth); });
+$$('#v-in [role="tab"]').forEach(b => b.addEventListener("click", () => {
+  $$('#v-in [role="tab"]').forEach(x => x.setAttribute("aria-selected", x === b));
+  ["apps", "invite", "people", "settings"].forEach(p => $("#" + p).hidden = p !== b.dataset.pane);
+}));
+
+// ---- Applications ----
+async function loadApps() {
+  const msg = $("#apps-msg"); msg.hidden = true;
+  try {
+    const snap = await getDocs(query(collection(db, "applications"), orderBy("createdAt", "desc")));
+    apps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const n = apps.filter(a => a.status === "new").length; $("#new-count").textContent = n ? `(${n} new)` : "";
+    renderApps();
+  } catch (e) { show(msg, "err", niceError(e)); }
+}
+function renderApps() {
+  const t = $("#fl-type").value, s = $("#fl-status").value;
+  const rows = apps.filter(a => (!t || a.type === t) && (!s || a.status === s));
+  const list = $("#apps-list");
+  if (!rows.length) { list.innerHTML = '<li class="item"><p class="lede">No applications here yet. New ones from meeyamhealth.org/apply.html appear in this list.</p></li>'; return; }
+  const F = [["phone", "Phone"], ["city", "Town"], ["occupation", "Occupation"], ["availability", "Availability"], ["institution", "Institution"], ["course", "Course"], ["startDate", "Start"], ["duration", "Duration"], ["experience", "Experience"], ["interests", "Interests"], ["motivation", "Why MYHF"], ["link", "CV / LinkedIn"]];
+  list.innerHTML = rows.map(a => `<li class="item" data-id="${esc(a.id)}">
+    <div class="actions" style="justify-content:space-between"><h3>${esc(a.name)}</h3><span class="pill ${a.status === "new" ? "new" : ""}">${esc(a.status)}</span></div>
+    <div class="meta">${esc(TYPE[a.type] || a.type)} · ${esc(a.email)} · ${fmtDate(a.createdAt)}</div>
+    <details><summary>Details</summary><dl class="kv">${F.filter(([k]) => a[k]).map(([k, l]) => `<dt>${l}</dt><dd>${k === "link" ? `<a href="${esc(a[k])}" target="_blank" rel="noopener">${esc(a[k])}</a>` : esc(Array.isArray(a[k]) ? a[k].join(", ") : a[k])}</dd>`).join("")}</dl></details>
+    <div class="actions"><label style="flex-direction:row;display:flex;gap:8px;align-items:center">Status <select data-act="status">${["new", "reviewed", "shortlisted", "accepted", "rejected"].map(x => `<option ${x === a.status ? "selected" : ""}>${x}</option>`).join("")}</select></label>
+    <a class="btn ghost small" href="mailto:${esc(a.email)}">Email</a><button class="btn danger small" data-act="del">Delete</button></div></li>`).join("");
+}
+$("#fl-type").addEventListener("change", renderApps); $("#fl-status").addEventListener("change", renderApps);
+$("#refresh").addEventListener("click", loadApps);
+$("#apps-list").addEventListener("change", async (e) => {
+  if (e.target.dataset.act !== "status") return;
+  const id = e.target.closest("[data-id]").dataset.id;
+  try { await updateDoc(doc(db, "applications", id), { status: e.target.value }); apps.find(a => a.id === id).status = e.target.value; renderApps(); loadAppsCount(); }
+  catch (err) { show($("#apps-msg"), "err", niceError(err)); }
+});
+function loadAppsCount() { const n = apps.filter(a => a.status === "new").length; $("#new-count").textContent = n ? `(${n} new)` : ""; }
+$("#apps-list").addEventListener("click", async (e) => {
+  const b = e.target.closest('[data-act="del"]'); if (!b) return;
+  const li = b.closest("[data-id]");
+  if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Click again to delete"; return; }
+  try { await deleteDoc(doc(db, "applications", li.dataset.id)); apps = apps.filter(a => a.id !== li.dataset.id); renderApps(); loadAppsCount(); }
+  catch (err) { show($("#apps-msg"), "err", niceError(err)); }
+});
+$("#csv").addEventListener("click", () => {
+  const cols = ["type", "status", "name", "email", "phone", "city", "occupation", "availability", "institution", "course", "startDate", "duration", "interests", "experience", "motivation", "link"];
+  const cell = (v) => '"' + String(Array.isArray(v) ? v.join("; ") : (v ?? "")).replace(/"/g, '""') + '"';
+  const lines = [["submitted", ...cols].join(",")].concat(apps.map(a => [cell(fmtDate(a.createdAt)), ...cols.map(c => cell(a[c]))].join(",")));
+  const url = URL.createObjectURL(new Blob(["﻿" + lines.join("\n")], { type: "text/csv" }));
+  const l = document.createElement("a"); l.href = url; l.download = "MYHF-applications.csv"; l.click(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+});
+
+// ---- Invite ----
+$("#inv-form").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  const name = $("#i-name").value.trim(), email = $("#i-email").value.trim().toLowerCase(), role = $("#i-role").value.trim();
+  try {
+    await setDoc(doc(db, "invites", email), { name, email, role, invitedBy: me, invitedAt: serverTimestamp() });
+    if ($("#i-admin").checked) await setDoc(doc(db, "admins", email), { email, addedBy: me, addedAt: serverTimestamp() });
+    show($("#inv-msg"), "ok", `${name} can now create an account with ${email}.`);
+    const subject = "Your invitation to the MYHF Staff Centre";
+    const body = `Dear ${name},\n\nYou've been invited to the Meeyam Health Foundation (MYHF) Staff Centre, where you can download our logos, PowerPoint template and letterhead.\n\nTo set up your account:\n1. Open https://meeyamhealth.org/staff.html\n2. Choose "Create account" and use this email address: ${email}\n3. Choose a password, then click the verification link we email you.\n\nIf you have any trouble, reply to this email.\n\nWarm regards,\nMeeyam Health Foundation\nmeeyamhealth.org`;
+    $("#inv-text").textContent = body;
+    $("#gmail").href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $("#mailto").href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $("#inv-send").hidden = false; e.target.reset(); loadPeople();
+  } catch (err) { show($("#inv-msg"), "err", niceError(err)); }
+});
+$("#copy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("#inv-text").textContent); $("#copy").textContent = "Copied"; }
+  catch { $("#inv-send details").open = true; const r = document.createRange(); r.selectNodeContents($("#inv-text")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("#copy").textContent = "Selected, press Ctrl+C"; }
+});
+
+// ---- People ----
+async function loadPeople() {
+  try {
+    const [inv, staff, admins] = await Promise.all([getDocs(collection(db, "invites")), getDocs(collection(db, "staff")), getDocs(collection(db, "admins"))]);
+    const joined = new Map(staff.docs.map(d => [d.data().email, d.data()]));
+    const adm = new Set(admins.docs.map(d => d.id));
+    const list = inv.docs.map(d => d.data()).sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    $("#people-list").innerHTML = list.length ? list.map(p => `<li class="item" data-email="${esc(p.email)}">
+      <div class="actions" style="justify-content:space-between"><h3>${esc(p.name || p.email)}</h3><span>${adm.has(p.email) ? '<span class="pill">Admin</span> ' : ""}<span class="pill ${joined.has(p.email) ? "new" : ""}">${joined.has(p.email) ? "Account active" : "Invited"}</span></span></div>
+      <div class="meta">${esc(p.email)}${p.role ? " · " + esc(p.role) : ""} · invited ${fmtDate(p.invitedAt)}</div>
+      <div class="actions">${adm.has(p.email) ? (p.email === me ? "" : '<button class="btn ghost small" data-act="unadmin">Remove admin</button>') : '<button class="btn ghost small" data-act="admin">Make admin</button>'}
+      ${p.email === me ? "" : '<button class="btn danger small" data-act="remove">Remove access</button>'}</div></li>`).join("") : '<li class="item"><p class="lede">No one invited yet.</p></li>';
+  } catch (e) { show($("#people-msg"), "err", niceError(e)); }
+}
+$("#people-list").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const email = b.closest("[data-email]").dataset.email;
+  try {
+    if (b.dataset.act === "admin") await setDoc(doc(db, "admins", email), { email, addedBy: me, addedAt: serverTimestamp() });
+    if (b.dataset.act === "unadmin") await deleteDoc(doc(db, "admins", email));
+    if (b.dataset.act === "remove") {
+      if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Click again to remove"; return; }
+      await deleteDoc(doc(db, "invites", email)); await deleteDoc(doc(db, "admins", email)).catch(() => {});
+    }
+    loadPeople();
+  } catch (err) { show($("#people-msg"), "err", niceError(err)); }
+});
+
+// ---- Settings ----
+async function loadSettings() {
+  try { const s = await getDoc(doc(db, "settings", "portal")); if (s.exists()) $("#s-path").value = s.data().resourcePath || ""; } catch (e) { console.error(e); }
+}
+$("#set-form").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  const p = $("#s-path").value.trim().replace(/^\/+|\/+$/g, "");
+  try { await setDoc(doc(db, "settings", "portal"), { resourcePath: p, updatedBy: me, updatedAt: serverTimestamp() }); show($("#set-msg"), "ok", "Saved. Staff can now see the files."); }
+  catch (err) { show($("#set-msg"), "err", niceError(err)); }
+});
+</script>
+</body>
+</html>

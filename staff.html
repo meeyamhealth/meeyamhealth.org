@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Staff Centre | MYHF</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<meta name="theme-color" content="#2C0A71">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800;125,800&family=Hind:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html" aria-label="Meeyam Health Foundation home"><img src="logo-header.png" alt="MYHF, Meeyam Health Foundation"></a>
+  <nav><a href="index.html">Website</a><a id="admin-link" href="admin.html" hidden>Admin portal</a><a id="signout" href="#" hidden>Sign out</a></nav>
+</div></header>
+
+<main><div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Insiders</div>
+    <h1>Staff Centre</h1>
+    <p class="lede">For MYHF employees and volunteers with an invitation. Sign in to download the logos, PowerPoint template and letterhead.</p>
+  </div>
+
+  <!-- Signed out -->
+  <section id="v-out" class="panel" hidden>
+    <div class="tabs" role="tablist" aria-label="Account">
+      <button role="tab" aria-selected="true" data-pane="p-in">Sign in</button>
+      <button role="tab" aria-selected="false" data-pane="p-up">Create account</button>
+      <button role="tab" aria-selected="false" data-pane="p-reset">Forgot password</button>
+    </div>
+    <form id="p-in" novalidate>
+      <label for="in-email">Email<input id="in-email" type="email" required autocomplete="email"></label>
+      <label for="in-pass">Password<input id="in-pass" type="password" required autocomplete="current-password"></label>
+      <div class="actions"><button class="btn" type="submit">Sign in</button></div>
+    </form>
+    <form id="p-up" novalidate hidden>
+      <p class="lede">Use the email address your invitation was sent to.</p>
+      <label for="up-name">Full name<input id="up-name" required maxlength="100" autocomplete="name"></label>
+      <label for="up-email">Email<input id="up-email" type="email" required autocomplete="email"></label>
+      <div class="row">
+        <label for="up-pass">Choose a password <small>At least 8 characters</small><input id="up-pass" type="password" required minlength="8" autocomplete="new-password"></label>
+        <label for="up-pass2">Repeat password<input id="up-pass2" type="password" required minlength="8" autocomplete="new-password"></label>
+      </div>
+      <div class="actions"><button class="btn" type="submit">Create account</button></div>
+    </form>
+    <form id="p-reset" novalidate hidden>
+      <label for="re-email">Email<input id="re-email" type="email" required autocomplete="email"></label>
+      <div class="actions"><button class="btn" type="submit">Email me a reset link</button></div>
+    </form>
+    <div id="out-msg" class="msg" hidden role="status"></div>
+  </section>
+
+  <!-- Signed in but not verified -->
+  <section id="v-verify" class="panel" hidden>
+    <h2>Confirm your email</h2>
+    <p>We sent a verification link to <b id="verify-email"></b>. Open it, then come back and press <b>I've verified</b>. Check your spam folder if you can't find it.</p>
+    <div class="actions"><button class="btn" id="verified">I've verified</button><button class="btn ghost" id="resend">Send the link again</button></div>
+    <div id="verify-msg" class="msg" hidden role="status"></div>
+  </section>
+
+  <!-- Not invited -->
+  <section id="v-noinvite" class="panel" hidden>
+    <h2>No invitation for this email</h2>
+    <p>The Staff Centre is open only to people an admin has invited. Ask your coordinator to invite <b id="noinv-email"></b>, or email meeyamhealth@gmail.com.</p>
+  </section>
+
+  <!-- Resources -->
+  <section id="v-in" hidden>
+    <div class="panel">
+      <div><h2 id="hello">Welcome</h2><p class="lede" style="margin-top:6px">Everything you need to represent MYHF consistently. Please don't share these files outside the Foundation.</p></div>
+      <div id="res-msg" class="msg" hidden role="status"></div>
+      <div class="grid2" id="resources"></div>
+      <div>
+        <h3>Brand colours</h3>
+        <div class="swatches" style="margin-top:10px">
+          <div class="sw"><i style="background:#2C0A71"></i><b>Meeyam Purple</b>#2C0A71</div>
+          <div class="sw"><i style="background:#00BF63"></i><b>Care Green</b>#00BF63</div>
+          <div class="sw"><i style="background:#FF3131"></i><b>Heart Red</b>#FF3131</div>
+          <div class="sw"><i style="background:#FFFFFF"></i><b>White</b>#FFFFFF</div>
+        </div>
+        <p class="lede" style="margin-top:10px">Fonts: Poppins for the logo; Arial for slide headings and Calibri for body text in Office templates.</p>
+      </div>
+    </div>
+  </section>
+</div></main>
+<footer class="footer"><div class="wrap">Meeyam Health Foundation · Staff Centre · Trouble signing in? Email meeyamhealth@gmail.com</div></footer>
+
+<script type="module">
+import { auth, db, configured, $, $$, show, esc, setupBanner, niceError } from "./portal.js";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+setupBanner();
+const views = ["v-out", "v-verify", "v-noinvite", "v-in"];
+const view = (id) => views.forEach(v => $("#" + v).hidden = v !== id);
+
+$$('#v-out [role="tab"]').forEach(b => b.addEventListener("click", () => {
+  $$('#v-out [role="tab"]').forEach(x => x.setAttribute("aria-selected", x === b));
+  ["p-in", "p-up", "p-reset"].forEach(p => $("#" + p).hidden = p !== b.dataset.pane);
+  $("#out-msg").hidden = true;
+}));
+
+if (!configured) { view("v-out"); $$("form button").forEach(b => b.disabled = true); }
+else onAuthStateChanged(auth, route);
+
+async function route(user) {
+  $("#signout").hidden = !user;
+  if (!user) return view("v-out");
+  const email = (user.email || "").toLowerCase();
+  if (!user.emailVerified) { $("#verify-email").textContent = email; return view("v-verify"); }
+  let invite, isAdmin = false;
+  try {
+    invite = await getDoc(doc(db, "invites", email));
+    const a = await getDoc(doc(db, "admins", email)); isAdmin = a.exists();
+  } catch (e) { console.error(e); }
+  $("#admin-link").hidden = !isAdmin;
+  if (!invite || !invite.exists()) { $("#noinv-email").textContent = email; return view("v-noinvite"); }
+  try { await setDoc(doc(db, "staff", user.uid), { email, name: user.displayName || invite.data().name || "", lastSeen: serverTimestamp() }, { merge: true }); } catch (e) { console.error(e); }
+  $("#hello").textContent = "Welcome, " + ((user.displayName || invite.data().name || "").split(" ")[0] || "colleague");
+  view("v-in");
+  loadResources();
+}
+
+async function loadResources() {
+  const box = $("#resources"), msg = $("#res-msg");
+  box.innerHTML = "";
+  let base;
+  try { const s = await getDoc(doc(db, "settings", "portal")); base = s.exists() ? s.data().resourcePath : ""; } catch (e) { console.error(e); }
+  if (!base) { show(msg, "info", "The files aren't connected yet. An admin needs to finish the last setup step (Admin portal ▸ Settings)."); return; }
+  base = base.replace(/^\/+|\/+$/g, "");
+  const items = [
+    ["MYHF-Logo-Pack.zip", "Logo pack (all versions)", "Seal, horizontal, stacked, MYHF, symbol and profile picture in colour, purple, black and white. PNG + SVG.", "Meeyam-MYHF-horizontal-full-colour.png"],
+    ["MYHF-Presentation-Template.pptx", "PowerPoint template", "Title, section, content, two-column, key numbers, photo and closing slides.", "preview-pptx.png"],
+    ["MYHF-Letterhead.docx", "Letterhead (Word)", "A4 letter with logo, contacts, registered office and CIN.", "preview-letterhead.png"],
+    ["Meeyam-MYHF-horizontal-full-colour.png", "MYHF logo (PNG)", "For documents, emails and websites on white.", "Meeyam-MYHF-horizontal-full-colour.png"],
+    ["Meeyam-seal-full-colour.png", "Round seal (PNG)", "For certificates and official documents.", "Meeyam-seal-full-colour.png"],
+    ["Meeyam-profile-picture-full-colour.png", "Profile picture (PNG)", "For WhatsApp, LinkedIn and other profiles.", "Meeyam-profile-picture-full-colour.png"]
+  ];
+  box.innerHTML = items.map(([f, t, d, prev]) => `<div class="res"><img src="${esc(base)}/${esc(prev)}" alt="" loading="lazy"><h3>${esc(t)}</h3><p class="lede" style="font-size:.93rem">${esc(d)}</p><a class="btn small" href="${esc(base)}/${esc(f)}" download>Download</a></div>`).join("");
+}
+
+$("#p-in").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  try { await signInWithEmailAndPassword(auth, $("#in-email").value.trim(), $("#in-pass").value); }
+  catch (err) { show($("#out-msg"), "err", niceError(err)); }
+});
+$("#p-up").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  const msg = $("#out-msg");
+  if ($("#up-pass").value !== $("#up-pass2").value) return show(msg, "err", "The two passwords don't match.");
+  const email = $("#up-email").value.trim().toLowerCase();
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, $("#up-pass").value);
+    await updateProfile(cred.user, { displayName: $("#up-name").value.trim() });
+    const inv = await getDoc(doc(db, "invites", email));
+    if (!inv.exists()) { await cred.user.delete(); return show(msg, "err", "This email hasn't been invited yet. Ask an admin to invite you, then try again."); }
+    await sendEmailVerification(cred.user, { url: location.origin + location.pathname });
+  } catch (err) { show(msg, "err", niceError(err)); }
+});
+$("#p-reset").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  try { await sendPasswordResetEmail(auth, $("#re-email").value.trim()); show($("#out-msg"), "ok", "If that email has an account, a reset link is on its way. Check your spam folder too."); }
+  catch (err) { show($("#out-msg"), "err", niceError(err)); }
+});
+$("#verified").addEventListener("click", async () => { await auth.currentUser.reload(); if (auth.currentUser.emailVerified) { await auth.currentUser.getIdToken(true); route(auth.currentUser); } else show($("#verify-msg"), "err", "Not verified yet. Open the link in the email first."); });
+$("#resend").addEventListener("click", async () => { try { await sendEmailVerification(auth.currentUser, { url: location.origin + location.pathname }); show($("#verify-msg"), "ok", "Sent. Check your inbox and spam folder."); } catch (err) { show($("#verify-msg"), "err", niceError(err)); } });
+$("#signout").addEventListener("click", (e) => { e.preventDefault(); signOut(auth); });
+</script>
+</body>
+</html>

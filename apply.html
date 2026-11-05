@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Apply | Meeyam Health Foundation (MYHF)</title>
+<meta name="description" content="Apply to volunteer, join the team or intern at Meeyam Health Foundation (MYHF), a not-for-profit public health organisation in Punjab, India.">
+<link rel="canonical" href="https://meeyamhealth.org/apply.html">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<meta name="theme-color" content="#2C0A71">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800;125,800&family=Hind:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html" aria-label="Meeyam Health Foundation home"><img src="logo-header.png" alt="MYHF, Meeyam Health Foundation"></a>
+  <nav><a href="index.html">Home</a><a href="index.html#contact">Contact</a></nav>
+</div></header>
+
+<main><div class="wrap">
+  <div class="head">
+    <div class="eyebrow">Get involved</div>
+    <h1>Apply to Meeyam Health Foundation</h1>
+    <p class="lede">Choose how you'd like to work with us. It takes about five minutes. We read every application and reply by email or phone.</p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Application type">
+    <button role="tab" id="t-volunteer" aria-selected="true" data-type="volunteer">Volunteer</button>
+    <button role="tab" id="t-member" aria-selected="false" data-type="member">Join the team</button>
+    <button role="tab" id="t-intern" aria-selected="false" data-type="intern">Internship</button>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <div>
+      <h2 id="form-title">Volunteer with us</h2>
+      <p class="lede" id="form-intro" style="margin-top:6px">Help at health camps, screenings, surveys and awareness drives, on weekends or whenever you can.</p>
+      <p id="gform" hidden style="margin-top:8px">Prefer Google Forms? <a id="gform-link" href="#" target="_blank" rel="noopener">Apply using Google Forms</a></p>
+    </div>
+
+    <form id="apply" novalidate>
+      <div class="row">
+        <label for="f-name">Full name<input id="f-name" name="name" required maxlength="100" autocomplete="name"></label>
+        <label for="f-email">Email<input id="f-email" name="email" type="email" required maxlength="150" autocomplete="email"></label>
+      </div>
+      <div class="row">
+        <label for="f-phone">Phone (WhatsApp preferred)<input id="f-phone" name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="+91"></label>
+        <label for="f-city">Town or district<input id="f-city" name="city" maxlength="100" placeholder="e.g. Ludhiana"></label>
+      </div>
+      <div class="row">
+        <label for="f-occupation">Current occupation or studies<input id="f-occupation" name="occupation" maxlength="150" placeholder="e.g. MBBS 3rd year, nurse, teacher"></label>
+        <label for="f-availability" data-for="volunteer member">Availability
+          <select id="f-availability" name="availability">
+            <option value="">Choose one</option><option>Weekends</option><option>A few hours a week</option><option>Part-time</option><option>Full-time</option><option>For specific events only</option>
+          </select></label>
+      </div>
+
+      <div class="row" data-for="intern">
+        <label for="f-institution">College or university<input id="f-institution" name="institution" maxlength="150"></label>
+        <label for="f-course">Course and year<input id="f-course" name="course" maxlength="150" placeholder="e.g. MPH, 1st year"></label>
+      </div>
+      <div class="row" data-for="intern">
+        <label for="f-start">Preferred start date<input id="f-start" name="startDate" type="date"></label>
+        <label for="f-duration">Duration
+          <select id="f-duration" name="duration"><option value="">Choose one</option><option>4 weeks</option><option>6–8 weeks</option><option>3 months</option><option>6 months</option></select></label>
+      </div>
+      <label for="f-experience" data-for="member">Relevant experience <small>Roles, years, skills</small><textarea id="f-experience" name="experience" maxlength="1500"></textarea></label>
+
+      <fieldset>
+        <legend>Areas you're interested in</legend>
+        <label class="check"><input type="checkbox" name="interests" value="Health camps & screening">Health camps & screening</label>
+        <label class="check"><input type="checkbox" name="interests" value="NCDs">NCDs</label>
+        <label class="check"><input type="checkbox" name="interests" value="Maternal & child health">Maternal & child health</label>
+        <label class="check"><input type="checkbox" name="interests" value="Nutrition">Nutrition</label>
+        <label class="check"><input type="checkbox" name="interests" value="Mental health">Mental health</label>
+        <label class="check"><input type="checkbox" name="interests" value="Research & surveys">Research & surveys</label>
+        <label class="check"><input type="checkbox" name="interests" value="IEC & design">IEC & design</label>
+        <label class="check"><input type="checkbox" name="interests" value="Admin & fundraising">Admin & fundraising</label>
+      </fieldset>
+
+      <label for="f-motivation">Why do you want to work with MYHF?<textarea id="f-motivation" name="motivation" required maxlength="2000"></textarea></label>
+      <label for="f-link">Link to your CV or LinkedIn <small>Optional. A Google Drive or LinkedIn link</small><input id="f-link" name="link" type="url" maxlength="300" placeholder="https://"></label>
+      <div class="hp" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="check"><input type="checkbox" id="f-consent" name="consent" required>I agree that Meeyam Health Foundation may store these details to contact me about this application.</label>
+      <div class="actions"><button class="btn" type="submit" id="submit">Submit application</button></div>
+      <div id="result" class="msg" hidden role="status"></div>
+    </form>
+  </div>
+</div></main>
+<footer class="footer"><div class="wrap">© 2026 Meeyam Health Foundation · <a href="index.html">meeyamhealth.org</a> · meeyamhealth@gmail.com</div></footer>
+
+<script type="module">
+import { db, configured, googleForms, $, $$, show, setupBanner } from "./portal.js";
+import { addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+setupBanner();
+const TEXT = {
+  volunteer: ["Volunteer with us", "Help at health camps, screenings, surveys and awareness drives, on weekends or whenever you can."],
+  member: ["Join the team", "Apply for a role with the Foundation: programme staff, health professionals, researchers and coordinators."],
+  intern: ["Internship", "For students in public health, medicine, nursing, nutrition, social work and design. Learn by working on real field programmes."]
+};
+let type = "volunteer";
+function setType(t) {
+  type = t;
+  $$('[role="tab"]').forEach(b => b.setAttribute("aria-selected", b.dataset.type === t));
+  $("#form-title").textContent = TEXT[t][0]; $("#form-intro").textContent = TEXT[t][1];
+  $$("[data-for]").forEach(el => el.hidden = !el.dataset.for.split(" ").includes(t));
+  const g = googleForms[t]; $("#gform").hidden = !g; if (g) $("#gform-link").href = g;
+  $("#result").hidden = true;
+  if (location.hash !== "#" + t) history.replaceState(null, "", "#" + t);
+}
+$$('[role="tab"]').forEach(b => b.addEventListener("click", () => setType(b.dataset.type)));
+const fromHash = location.hash.slice(1); setType(TEXT[fromHash] ? fromHash : "volunteer");
+
+$("#apply").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target, out = $("#result");
+  if (!f.reportValidity()) return;
+  if (f.website.value) { show(out, "ok", "Thank you. Your application has been received."); f.reset(); return; }
+  if (!configured) { show(out, "err", "Applications aren't switched on yet. Please email meeyamhealth@gmail.com in the meantime."); return; }
+  const v = (n) => (f[n] && !f[n].closest("[hidden]") ? f[n].value.trim() : "");
+  const data = { type, name: v("name"), email: v("email").toLowerCase(), phone: v("phone"), consent: true, status: "new", createdAt: serverTimestamp() };
+  for (const k of ["city", "occupation", "availability", "institution", "course", "startDate", "duration", "experience", "motivation", "link"]) { const x = v(k); if (x) data[k] = x; }
+  const ints = $$('input[name="interests"]:checked', f).map(i => i.value); if (ints.length) data.interests = ints;
+  const btn = $("#submit"); btn.disabled = true; btn.textContent = "Sending…";
+  try {
+    await addDoc(collection(db, "applications"), data);
+    show(out, "ok", `Thank you, ${data.name.split(" ")[0]}. Your application has been received. We'll contact you at ${data.email}.`);
+    f.reset();
+  } catch (err) {
+    console.error(err);
+    show(out, "err", "Your application couldn't be sent. Check your connection and try again, or email meeyamhealth@gmail.com.");
+  } finally { btn.disabled = false; btn.textContent = "Submit application"; }
+});
+</script>
+</body>
+</html>
