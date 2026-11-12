@@ -21,7 +21,7 @@
   <div class="head">
     <div class="eyebrow">Admins only</div>
     <h1>Admin Portal</h1>
-    <p class="lede">Invite staff, manage who has access, and review applications.</p>
+    <p class="lede">Record donations and issue receipts, review applications, and manage staff access.</p>
   </div>
 
   <section id="v-out" class="panel" hidden>
@@ -40,14 +40,39 @@
 
   <section id="v-in" hidden>
     <div class="tabs" role="tablist" aria-label="Admin sections">
-      <button role="tab" aria-selected="true" data-pane="apps">Applications <span id="new-count"></span></button>
+      <button role="tab" aria-selected="true" data-pane="dons">Donations <span id="don-count"></span></button>
+      <button role="tab" aria-selected="false" data-pane="apps">Applications <span id="new-count"></span></button>
       <button role="tab" aria-selected="false" data-pane="invite">Invite staff</button>
       <button role="tab" aria-selected="false" data-pane="people">Staff & access</button>
       <button role="tab" aria-selected="false" data-pane="settings">Settings</button>
     </div>
 
+    <!-- Donations -->
+    <div class="panel" id="dons" style="margin-top:16px">
+      <div><h2>Donations</h2><p class="lede" style="margin-top:6px">Donors fill the form at meeyamhealth.org/donate.html after paying. Check each one against the Federal Bank statement, then issue the receipt.</p></div>
+      <ol class="lede" style="margin:0;padding-left:20px">
+        <li><b>Pending:</b> find the amount and reference in the bank statement, then click <i>Payment received</i>.</li>
+        <li><b>Verified:</b> click <i>Issue receipt</i>. It gets the next receipt number.</li>
+        <li><b>Receipted:</b> click <i>Email receipt</i> to send the donor their link from Gmail.</li>
+      </ol>
+      <div class="toolbar">
+        <label for="dn-status">Status<select id="dn-status"><option value="">All</option><option value="pending" selected>Pending</option><option value="verified">Verified</option><option value="receipted">Receipted</option><option value="rejected">Not received</option></select></label>
+        <label for="dn-fy">Financial year<select id="dn-fy"><option value="">All years</option></select></label>
+        <label for="dn-q">Search<input id="dn-q" placeholder="Name, ref, UTR, email"></label>
+        <button class="btn ghost small" id="dn-refresh">Refresh</button>
+      </div>
+      <div class="actions">
+        <button class="btn ghost small" id="dn-statement">Download annual donation statement (CSV)</button>
+        <button class="btn ghost small" id="dn-csv">Download all donations (CSV)</button>
+      </div>
+      <p class="lede" style="font-size:.9rem">The annual statement lists receipted 80G donations for the chosen financial year in the column order of the Income Tax donation statement (Form 10BD). It's due by 31 May after the year ends; ask your CA to check the columns against the current form before filing.</p>
+      <div id="dn-total" class="msg info" hidden></div>
+      <div id="dn-msg" class="msg" hidden role="status"></div>
+      <ul class="list" id="dn-list"></ul>
+    </div>
+
     <!-- Applications -->
-    <div class="panel" id="apps" style="margin-top:16px">
+    <div class="panel" id="apps" hidden style="margin-top:16px">
       <div class="toolbar">
         <label for="fl-type">Type<select id="fl-type"><option value="">All</option><option value="volunteer">Volunteer</option><option value="member">Join the team</option><option value="intern">Internship</option></select></label>
         <label for="fl-status">Status<select id="fl-status"><option value="">All</option><option>new</option><option>reviewed</option><option>shortlisted</option><option>accepted</option><option>rejected</option></select></label>
@@ -97,6 +122,30 @@
         <div class="actions"><button class="btn" type="submit">Save</button></div>
       </form>
       <div id="set-msg" class="msg" hidden role="status"></div>
+
+      <div style="border-top:1px solid var(--line);padding-top:20px"><h2>Receipt details</h2><p class="lede" style="margin-top:6px">Printed on every donation receipt. Changes apply to receipts issued after you save.</p></div>
+      <form id="rc-form" novalidate>
+        <div class="row">
+          <label for="rc-name">Organisation name<input id="rc-name" required maxlength="120"></label>
+          <label for="rc-contact">Contact line<input id="rc-contact" maxlength="160"></label>
+        </div>
+        <label for="rc-address">Registered address<input id="rc-address" required maxlength="250"></label>
+        <div class="row">
+          <label for="rc-cin">CIN<input id="rc-cin" maxlength="30"></label>
+          <label for="rc-pan">PAN of the Foundation<input id="rc-pan" required maxlength="10"></label>
+        </div>
+        <div class="row">
+          <label for="rc-urn">80G URN<input id="rc-urn" required maxlength="40"></label>
+          <label for="rc-urndate">URN date <small>As on the 80G approval order</small><input id="rc-urndate" maxlength="40" placeholder="e.g. 08 October 2026"></label>
+        </div>
+        <label for="rc-approval">80G sentence on the receipt<input id="rc-approval" maxlength="300"></label>
+        <div class="row">
+          <label for="rc-sig">Signatory name<input id="rc-sig" required maxlength="100"></label>
+          <label for="rc-sigt">Signatory title<input id="rc-sigt" maxlength="100"></label>
+        </div>
+        <div class="actions"><button class="btn" type="submit">Save receipt details</button></div>
+      </form>
+      <div id="rc-msg" class="msg" hidden role="status"></div>
     </div>
   </section>
 </div></main>
@@ -105,7 +154,7 @@
 <script type="module">
 import { auth, db, configured, $, $$, show, esc, setupBanner, niceError, fmtDate } from "./portal.js";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 setupBanner();
 const view = (id) => ["v-out", "v-denied", "v-in"].forEach(v => $("#" + v).hidden = v !== id);
 const TYPE = { volunteer: "Volunteer", member: "Join the team", intern: "Internship" };
@@ -119,7 +168,7 @@ else onAuthStateChanged(auth, async (user) => {
   if (!user.emailVerified) { $("#denied-text").textContent = "Verify your email first: open the Staff Centre, sign in and follow the verification step."; return view("v-denied"); }
   let ok = false; try { ok = (await getDoc(doc(db, "admins", me))).exists(); } catch (e) { console.error(e); }
   if (!ok) return view("v-denied");
-  view("v-in"); loadApps(); loadPeople(); loadSettings();
+  view("v-in"); loadDonations(); loadApps(); loadPeople(); loadSettings();
 });
 
 $("#login").addEventListener("submit", async (e) => {
@@ -130,7 +179,7 @@ $("#login").addEventListener("submit", async (e) => {
 $("#signout").addEventListener("click", (e) => { e.preventDefault(); signOut(auth); });
 $$('#v-in [role="tab"]').forEach(b => b.addEventListener("click", () => {
   $$('#v-in [role="tab"]').forEach(x => x.setAttribute("aria-selected", x === b));
-  ["apps", "invite", "people", "settings"].forEach(p => $("#" + p).hidden = p !== b.dataset.pane);
+  ["dons", "apps", "invite", "people", "settings"].forEach(p => $("#" + p).hidden = p !== b.dataset.pane);
 }));
 
 // ---- Applications ----
@@ -232,12 +281,182 @@ $("#people-list").addEventListener("click", async (e) => {
 // ---- Settings ----
 async function loadSettings() {
   try { const s = await getDoc(doc(db, "settings", "portal")); if (s.exists()) $("#s-path").value = s.data().resourcePath || ""; } catch (e) { console.error(e); }
+  try { const r = await getDoc(doc(db, "settings", "receipts")); if (r.exists() && r.data().org) ORG = { ...ORG, ...r.data().org }; } catch (e) { console.error(e); }
+  fillOrg();
 }
 $("#set-form").addEventListener("submit", async (e) => {
   e.preventDefault(); if (!e.target.reportValidity()) return;
   const p = $("#s-path").value.trim().replace(/^\/+|\/+$/g, "");
   try { await setDoc(doc(db, "settings", "portal"), { resourcePath: p, updatedBy: me, updatedAt: serverTimestamp() }); show($("#set-msg"), "ok", "Saved. Staff can now see the files."); }
   catch (err) { show($("#set-msg"), "err", niceError(err)); }
+});
+
+// ---- Donations ----
+let ORG = {
+  name: "Meeyam Health Foundation",
+  address: "H.No. 01, Street No. 01, Mohar Singh Nagar, Shivpuri, Ludhiana, Punjab 141008, India",
+  contact: "meeyamhealth@gmail.com · +91 98785 33381 · meeyamhealth.org",
+  cin: "U88900PB2026NPL069882",
+  pan: "AAVCM5647H",
+  urn: "AAVCM5647HF20261",
+  urnDate: "",
+  approvalNote: "Meeyam Health Foundation has provisional approval under Section 80G of the Income-tax Act.",
+  signatory: "Melkey Stephen Bunyan",
+  signatoryTitle: "Director"
+};
+const RC = { name: "rc-name", contact: "rc-contact", address: "rc-address", cin: "rc-cin", pan: "rc-pan", urn: "rc-urn", urnDate: "rc-urndate", approvalNote: "rc-approval", signatory: "rc-sig", signatoryTitle: "rc-sigt" };
+function fillOrg() { for (const k in RC) $("#" + RC[k]).value = ORG[k] || ""; }
+fillOrg();
+$("#rc-form").addEventListener("submit", async (e) => {
+  e.preventDefault(); if (!e.target.reportValidity()) return;
+  const o = {}; for (const k in RC) o[k] = $("#" + RC[k]).value.trim();
+  o.pan = o.pan.toUpperCase();
+  try { await setDoc(doc(db, "settings", "receipts"), { org: o, updatedBy: me, updatedAt: serverTimestamp() }); ORG = o; show($("#rc-msg"), "ok", "Saved. New receipts will use these details."); }
+  catch (err) { show($("#rc-msg"), "err", niceError(err)); }
+});
+
+let dons = [];
+const inr = (n) => "₹" + Number(n || 0).toLocaleString("en-IN");
+const fyOf = (ymd) => { const [y, m] = String(ymd || "").split("-").map(Number); if (!y) return ""; const s = m >= 4 ? y : y - 1; return `${s}-${String(s + 1).slice(2)}`; };
+const dmy = (ymd) => { try { return new Date(ymd + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }); } catch { return ymd; } };
+const STATUS = { pending: "Pending", verified: "Verified", receipted: "Receipted", rejected: "Not received" };
+
+function words(n) {
+  n = Math.round(n);
+  if (n === 0) return "Zero";
+  const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  const two = (x) => x < 20 ? a[x] : b[Math.floor(x / 10)] + (x % 10 ? " " + a[x % 10] : "");
+  const three = (x) => (x >= 100 ? a[Math.floor(x / 100)] + " Hundred" + (x % 100 ? " " : "") : "") + (x % 100 ? two(x % 100) : "");
+  const parts = []; const cr = Math.floor(n / 1e7); n %= 1e7; const lk = Math.floor(n / 1e5); n %= 1e5; const th = Math.floor(n / 1e3); n %= 1e3;
+  if (cr) parts.push(three(cr) + " Crore"); if (lk) parts.push(two(lk) + " Lakh"); if (th) parts.push(two(th) + " Thousand"); if (n) parts.push(three(n));
+  return parts.join(" ");
+}
+const mask = (type, v) => !v ? "" : type === "Aadhaar" ? "XXXX XXXX " + v.slice(-4) : v.length > 4 ? v.slice(0, 2) + "X".repeat(v.length - 5) + v.slice(-3) : v;
+const fullAddr = (d) => [d.address, d.city, d.state, d.pin].filter(Boolean).join(", ");
+const receiptUrl = (rid) => `${location.origin}/receipt.html?id=${rid}`;
+const rid = () => { const A = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; return [...crypto.getRandomValues(new Uint8Array(24))].map(x => A[x % A.length]).join(""); };
+
+async function loadDonations() {
+  const msg = $("#dn-msg"); msg.hidden = true;
+  try {
+    const snap = await getDocs(query(collection(db, "donations"), orderBy("createdAt", "desc")));
+    dons = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const n = dons.filter(d => d.status === "pending").length; $("#don-count").textContent = n ? `(${n} pending)` : "";
+    const fys = [...new Set(dons.map(d => fyOf(d.paidOn)).filter(Boolean))].sort().reverse();
+    const cur = $("#dn-fy").value;
+    $("#dn-fy").innerHTML = '<option value="">All years</option>' + fys.map(f => `<option ${f === cur ? "selected" : ""}>${f}</option>`).join("");
+    renderDons();
+  } catch (e) { show(msg, "err", niceError(e)); }
+}
+function filteredDons() {
+  const s = $("#dn-status").value, fy = $("#dn-fy").value, q = $("#dn-q").value.trim().toLowerCase();
+  return dons.filter(d => (!s || d.status === s) && (!fy || fyOf(d.paidOn) === fy) &&
+    (!q || [d.name, d.ref, d.id, d.txnRef, d.email, d.phone, d.receiptNo].some(x => String(x || "").toLowerCase().includes(q))));
+}
+function renderDons() {
+  const rows = filteredDons(), list = $("#dn-list");
+  const tot = rows.filter(d => d.status !== "rejected").reduce((a, d) => a + (d.amount || 0), 0);
+  $("#dn-total").hidden = !rows.length; $("#dn-total").textContent = `${rows.length} donation${rows.length === 1 ? "" : "s"} shown · ${inr(tot)} (excluding not received)`;
+  if (!rows.length) { list.innerHTML = '<li class="item"><p class="lede">Nothing here. New donor forms from meeyamhealth.org/donate.html appear under Pending.</p></li>'; return; }
+  list.innerHTML = rows.map(d => {
+    const F = [["Paid on", dmy(d.paidOn)], ["Mode", d.mode], ["Reference (UTR / cheque)", d.txnRef], ["Email", d.email], ["Phone", d.phone], ["Donating as", d.donorType],
+      ["80G receipt", d.wants80G ? "Yes" : "No"], ["ID", d.idNumber ? `${d.idType}: ${d.idNumber}` : ""], ["Address", fullAddr(d)], ["Message", d.note],
+      ["Receipt no.", d.receiptNo], ["Submitted", fmtDate(d.createdAt)], ["Checked by", d.verifiedBy]].filter(([, v]) => v);
+    let acts = "";
+    if (d.status === "pending") acts = '<button class="btn small" data-act="verify">Payment received</button><button class="btn danger small" data-act="reject">Not in bank statement</button>';
+    if (d.status === "verified") acts = '<button class="btn small" data-act="issue">Issue receipt</button><button class="btn ghost small" data-act="unverify">Back to pending</button>';
+    if (d.status === "receipted") acts = `<button class="btn small" data-act="email">Email receipt</button><a class="btn ghost small" href="${esc(receiptUrl(d.receiptId))}" target="_blank" rel="noopener">View receipt</a><button class="btn ghost small" data-act="copylink">Copy link</button>`;
+    if (d.status === "rejected") acts = '<button class="btn ghost small" data-act="unverify">Back to pending</button><button class="btn danger small" data-act="del">Delete</button>';
+    return `<li class="item" data-id="${esc(d.id)}">
+      <div class="actions" style="justify-content:space-between"><h3>${esc(d.name)} · ${inr(d.amount)}</h3><span class="pill ${d.status === "pending" ? "new" : ""}">${esc(STATUS[d.status] || d.status)}</span></div>
+      <div class="meta">${esc(d.ref || d.id)} · ${esc(d.mode)} ${esc(d.txnRef)} · paid ${esc(dmy(d.paidOn))}${d.receiptNo ? " · " + esc(d.receiptNo) : ""}</div>
+      <details><summary>Details</summary><dl class="kv">${F.map(([l, v]) => `<dt>${esc(l)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></details>
+      <div class="actions">${acts}</div></li>`;
+  }).join("");
+}
+["#dn-status", "#dn-fy"].forEach(s => $(s).addEventListener("change", renderDons));
+$("#dn-q").addEventListener("input", renderDons);
+$("#dn-refresh").addEventListener("click", loadDonations);
+
+async function issueReceipt(d) {
+  const fy = fyOf(d.paidOn), receiptId = rid();
+  const is80G = !!(d.wants80G && d.idNumber);
+  const receiptNo = await runTransaction(db, async (tx) => {
+    const dref = doc(db, "donations", d.id), cref = doc(db, "counters", "receipts-" + fy);
+    const [ds, cs] = [await tx.get(dref), await tx.get(cref)];
+    if (!ds.exists() || ds.data().status !== "verified") throw new Error("This donation is no longer marked verified. Refresh and try again.");
+    const next = (cs.exists() ? cs.data().last || 0 : 0) + 1;
+    const no = `MYHF/${fy}/${String(next).padStart(4, "0")}`;
+    const now = new Date();
+    tx.set(cref, { last: next, updatedAt: serverTimestamp() });
+    tx.set(doc(db, "receipts", receiptId), {
+      receiptNo: no, receiptDate: serverTimestamp(), receiptDateText: now.toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }),
+      donorName: d.name, donorAddress: is80G ? fullAddr(d) : "", idType: is80G ? d.idType : "", idMasked: is80G ? mask(d.idType, d.idNumber) : "",
+      amount: d.amount, amountText: inr(d.amount), amountWords: "Rupees " + words(d.amount) + " only",
+      paidOn: d.paidOn, paidOnText: dmy(d.paidOn), mode: d.mode, txnRef: d.txnRef, donationRef: d.ref || d.id,
+      donationType: "General donation", is80G, org: ORG, issuedBy: me, void: false
+    });
+    tx.update(dref, { status: "receipted", receiptNo: no, receiptId, fy, receiptedAt: serverTimestamp(), receiptedBy: me });
+    return no;
+  });
+  Object.assign(d, { status: "receipted", receiptNo, receiptId, fy });
+  return d;
+}
+function emailLinks(d) {
+  const subject = `Your donation receipt ${d.receiptNo} – Meeyam Health Foundation`;
+  const body = `Dear ${d.name},\n\nThank you for your donation of ${inr(d.amount)} to Meeyam Health Foundation, received on ${dmy(d.paidOn)} (${d.mode}, ref. ${d.txnRef}).\n\nYour receipt no. ${d.receiptNo} is here:\n${receiptUrl(d.receiptId)}\n\nOpen the link to view it, print it or save it as a PDF.${d.wants80G && d.idNumber ? `\n\nThis donation qualifies for deduction under Section 80G (URN ${ORG.urn}). After the financial year ends we report it to the Income Tax Department, and you can then download your donation certificate from your income tax login.` : ""}\n\nYour support helps us bring free health screening and care to families in Punjab.\n\nWith gratitude,\nMeeyam Health Foundation\nmeeyamhealth.org · +91 98785 33381`;
+  return {
+    gmail: `https://mail.google.com/mail/?authuser=meeyamhealth@gmail.com&view=cm&fs=1&to=${encodeURIComponent(d.email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+    mailto: `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  };
+}
+$("#dn-list").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const id = b.closest("[data-id]").dataset.id, d = dons.find(x => x.id === id), msg = $("#dn-msg"); msg.hidden = true;
+  const ref = doc(db, "donations", id);
+  try {
+    if (b.dataset.act === "verify") { await updateDoc(ref, { status: "verified", verifiedBy: me, verifiedAt: serverTimestamp() }); Object.assign(d, { status: "verified", verifiedBy: me }); }
+    if (b.dataset.act === "unverify") { await updateDoc(ref, { status: "pending" }); d.status = "pending"; }
+    if (b.dataset.act === "reject") {
+      if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Click again: not received"; return; }
+      await updateDoc(ref, { status: "rejected", verifiedBy: me, verifiedAt: serverTimestamp() }); Object.assign(d, { status: "rejected", verifiedBy: me });
+    }
+    if (b.dataset.act === "del") {
+      if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Click again to delete"; return; }
+      await deleteDoc(ref); dons = dons.filter(x => x.id !== id);
+    }
+    if (b.dataset.act === "issue") {
+      b.disabled = true; b.textContent = "Issuing…";
+      await issueReceipt(d);
+      show(msg, "ok", `Receipt ${d.receiptNo} issued for ${d.name}. Click "Email receipt" to send it.`);
+      $("#dn-status").value = "receipted";
+    }
+    if (b.dataset.act === "email") { window.open(emailLinks(d).gmail, "_blank", "noopener"); return; }
+    if (b.dataset.act === "copylink") { try { await navigator.clipboard.writeText(receiptUrl(d.receiptId)); b.textContent = "Copied"; } catch { prompt("Receipt link", receiptUrl(d.receiptId)); } return; }
+    const n = dons.filter(x => x.status === "pending").length; $("#don-count").textContent = n ? `(${n} pending)` : "";
+    renderDons();
+  } catch (err) { console.error(err); show(msg, "err", niceError(err)); b.disabled = false; }
+});
+
+function download(name, rows) {
+  const cell = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const url = URL.createObjectURL(new Blob(["﻿" + rows.map(r => r.map(cell).join(",")).join("\r\n")], { type: "text/csv" }));
+  const l = document.createElement("a"); l.href = url; l.download = name; l.click(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+$("#dn-csv").addEventListener("click", () => {
+  const cols = [["ref", "Reference"], ["status", "Status"], ["paidOn", "Paid on"], ["amount", "Amount"], ["mode", "Mode"], ["txnRef", "UTR / cheque"], ["name", "Name"], ["donorType", "Donating as"], ["email", "Email"], ["phone", "Phone"], ["wants80G", "80G"], ["idType", "ID type"], ["idNumber", "ID number"], ["address", "Address"], ["city", "City"], ["state", "State"], ["pin", "PIN"], ["note", "Message"], ["receiptNo", "Receipt no."]];
+  const rows = filteredDons();
+  download("MYHF-donations.csv", [["Submitted", ...cols.map(c => c[1])], ...rows.map(d => [fmtDate(d.createdAt), ...cols.map(([k]) => d[k])])]);
+});
+$("#dn-statement").addEventListener("click", () => {
+  const fy = $("#dn-fy").value, msg = $("#dn-msg");
+  if (!fy) { show(msg, "err", "Choose a financial year first."); $("#dn-fy").focus(); return; }
+  const rows = dons.filter(d => d.status === "receipted" && fyOf(d.paidOn) === fy && d.wants80G && d.idNumber).sort((a, b) => (a.receiptNo || "").localeCompare(b.receiptNo || ""));
+  if (!rows.length) { show(msg, "err", `No receipted 80G donations for ${fy} yet.`); return; }
+  const ID_NAME = { "PAN": "Permanent Account Number", "Aadhaar": "Aadhaar Number", "Passport": "Passport number", "Voter ID": "Elector's photo identity number", "Driving licence": "Driving License number", "Ration card": "Ration card number" };
+  const head = ["Sr. No.", "Pre Acknowledgement Number", "ID Code", "Unique Identification Number", "Section Code", "Unique Registration Number (URN)", "Date of Issuance of Unique Registration Number", "Name of donor", "Address of donor", "Donation Type", "Mode of receipt", "Amount of donation (Indian rupees)", "Receipt no.", "Date of donation"];
+  download(`MYHF-donation-statement-FY${fy}.csv`, [head, ...rows.map((d, i) => [i + 1, "", ID_NAME[d.idType] || d.idType, d.idNumber, "Section 80G", ORG.urn, ORG.urnDate, d.name, fullAddr(d), "Others", "Electronic modes including account payee cheque/draft", d.amount, d.receiptNo, d.paidOn])]);
 });
 </script>
 </body>
