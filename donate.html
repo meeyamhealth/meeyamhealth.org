@@ -30,6 +30,19 @@
 .amt[aria-pressed="true"]{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .amt:focus-visible{outline:3px solid var(--green);outline-offset:2px}
 .other{max-width:260px}
+.amt small{display:block;font-family:var(--body);font-weight:500;font-size:.8rem;opacity:.85;margin-bottom:2px}
+.peoplecalc{display:flex;flex-wrap:wrap;align-items:end;gap:12px}
+.peoplecalc .tot{font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--accent-text);padding-bottom:10px}
+.csr{border:2px solid var(--indigo)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.fact{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fact b{display:block;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:1.35rem;color:var(--accent-text);line-height:1.2}
+.fact span{font-size:.9rem;color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+.cols ul{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.cols h3{margin:0}
+.section-h{display:grid;gap:6px;margin-top:10px}
 .hint{color:var(--muted);font-size:.93rem}
 .paytabs{margin-bottom:4px;display:grid;grid-template-columns:repeat(3,1fr);width:100%;max-width:460px;border-radius:14px}
 .paytabs button{text-align:center;padding:8px 6px;border-radius:10px}
@@ -67,29 +80,76 @@ input[aria-invalid="true"]{border-color:var(--red-text)}
 <main><div class="wrap">
   <div class="hero">
     <div class="eyebrow">Donate</div>
-    <h1>Support community health in Punjab</h1>
-    <p class="lede">Your gift funds free health screening, follow-up care and health education for families who cannot pay. It takes about two minutes.</p>
+    <h1>Support Meeyam Health Foundation</h1>
+    <p class="lede">Your gift funds free health screening, follow-up care and health education for workers and families across Punjab. Companies can fund our CSR project; individuals can donate in two minutes.</p>
     <ul class="trust">
       <li><b>80G</b> tax benefit</li>
-      <li>Receipt by email</li>
       <li>Section 8 not-for-profit</li>
-      <li>UPI or bank transfer</li>
+      <li>Receipt by email</li>
     </ul>
   </div>
 
   <div class="steps">
+    <!-- CSR -->
+    <section class="panel csr" id="csr" aria-labelledby="csr-h">
+      <div class="section-h" style="margin-top:0">
+        <div class="eyebrow">For companies · CSR partnership</div>
+        <h2 id="csr-h">Fund our CSR project: Healthy Workers, Healthy Ludhiana</h2>
+        <p class="lede">A six-month project to screen 1,000 industrial workers and residents in Ludhiana for high blood pressure, diabetes and anaemia. We then make sure everyone at risk reaches free government care.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><b>1,000</b><span>adults screened</span></div>
+        <div class="fact"><b>6 months</b><span>project length</span></div>
+        <div class="fact"><b>&#8377;7.53 lakh</b><span>total CSR support</span></div>
+        <div class="fact"><b>~&#8377;753</b><span>per person</span></div>
+      </div>
+      <p><b>Why it matters.</b> More than one in three men in Punjab has high blood pressure (NFHS-5, 2019&ndash;21). Most working adults aren't checked until they fall ill, often after a stroke or heart attack.</p>
+      <div class="cols">
+        <div><h3>What we do</h3><ul>
+          <li>Screening camps at workplaces and in the community, held at shift change so no one loses wages</li>
+          <li>Referral to Ayushman Arogya Mandirs and the Civil Hospital for free treatment</li>
+          <li>Follow-up with everyone referred at 1 and 3 months, until they're under a doctor's care</li>
+          <li>Results shared with the District Health Society and published in a public health journal</li>
+        </ul></div>
+        <div><h3>What your company receives</h3><ul>
+          <li>Monthly updates and quarterly utilisation statements</li>
+          <li>A final report with results, photos and stories shared with consent</li>
+          <li>A utilisation certificate from our chartered accountant</li>
+          <li>Your logo on camp banners and health materials</li>
+        </ul></div>
+      </div>
+      <p class="hint">Health data is shared only as totals, never with names.</p>
+      <p><b>Eligibility.</b> The project falls under Schedule VII, item (i): promoting health care, including preventive health care. Meeyam Health Foundation is a Section 8 company with provisional 12A and 80G approval. Our CSR-1 registration is in progress.</p>
+      <div class="actions">
+        <a class="btn" href="mailto:meeyamhealth@gmail.com?cc=directormyhf@gmail.com&amp;subject=CSR%20proposal%20request%20%E2%80%93%20Healthy%20Workers%2C%20Healthy%20Ludhiana&amp;body=Dear%20Meeyam%20Health%20Foundation%2C%0A%0APlease%20send%20us%20the%20full%20CSR%20proposal%20for%20Healthy%20Workers%2C%20Healthy%20Ludhiana.%0A%0ACompany%3A%0AContact%20person%3A%0APhone%3A%0A">Request the full proposal</a>
+        <a class="btn ghost" href="tel:+919878533381">Call us: +91 98785 33381</a>
+      </div>
+      <p class="hint">Or email <a href="mailto:meeyamhealth@gmail.com">meeyamhealth@gmail.com</a> or <a href="mailto:directormyhf@gmail.com">directormyhf@gmail.com</a>.</p>
+    </section>
+
+    <div class="section-h" id="give">
+      <div class="eyebrow">For individuals</div>
+      <h2>Donate as an individual</h2>
+      <p class="lede">&#8377;753 covers screening, referral and follow-up for one person in our Ludhiana project.</p>
+    </div>
+
     <!-- STEP 1 -->
     <section class="panel step" id="s1" aria-labelledby="h1s">
       <div class="step-h"><span class="num">1</span><h2 id="h1s">Choose an amount</h2></div>
       <div class="amounts" role="group" aria-label="Donation amount">
-        <button type="button" class="amt" data-amt="500" aria-pressed="false">&#8377;500</button>
-        <button type="button" class="amt" data-amt="1000" aria-pressed="true">&#8377;1,000</button>
-        <button type="button" class="amt" data-amt="2500" aria-pressed="false">&#8377;2,500</button>
-        <button type="button" class="amt" data-amt="5000" aria-pressed="false">&#8377;5,000</button>
-        <button type="button" class="amt" data-amt="10000" aria-pressed="false">&#8377;10,000</button>
-        <button type="button" class="amt" data-amt="other" aria-pressed="false">Other</button>
+        <button type="button" class="amt" data-amt="753" aria-pressed="true"><small>1 person</small>&#8377;753</button>
+        <button type="button" class="amt" data-amt="1506" aria-pressed="false"><small>2 people</small>&#8377;1,506</button>
+        <button type="button" class="amt" data-amt="2259" aria-pressed="false"><small>3 people</small>&#8377;2,259</button>
+        <button type="button" class="amt" data-amt="3012" aria-pressed="false"><small>4 people</small>&#8377;3,012</button>
+        <button type="button" class="amt" data-amt="3765" aria-pressed="false"><small>5 people</small>&#8377;3,765</button>
+        <button type="button" class="amt" data-amt="more" aria-pressed="false"><small>More people</small>&#8377;753 each</button>
+        <button type="button" class="amt" data-amt="other" aria-pressed="false"><small>Any amount</small>Other</button>
       </div>
-      <label for="other-amt" class="other" id="other-wrap" hidden>Your amount (&#8377;)<input id="other-amt" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 1500"></label>
+      <div class="peoplecalc" id="more-wrap" hidden>
+        <label for="more-n" class="other">Number of people<input id="more-n" type="number" inputmode="numeric" min="1" max="1000" step="1" value="10"></label>
+        <span class="tot" aria-live="polite">= <span id="more-tot"></span></span>
+      </div>
+      <label for="other-amt" class="other" id="other-wrap" hidden>Your amount (&#8377;)<input id="other-amt" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 1000"></label>
     </section>
 
     <!-- STEP 2 -->
@@ -231,25 +291,30 @@ const DRAFT = "myhf-donate-draft";
 const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 
 // ---- Amount ----
-let amount = 1000;
+const PER = 753;
+let amount = PER;
 function setAmount(v, fromField) {
   amount = Math.round(Number(v)) || 0;
   $$("[data-show-amt]").forEach(el => el.textContent = amount > 0 ? inr(amount) : "");
   if (!fromField) $("#d-amount").value = amount || "";
   saveDraft();
 }
+function moreAmount() { const n = Math.max(1, Math.min(1000, Math.round(Number($("#more-n").value)) || 0)); $("#more-tot").textContent = inr(n * PER); return n * PER; }
 $$(".amt").forEach(b => b.addEventListener("click", () => {
   $$(".amt").forEach(x => x.setAttribute("aria-pressed", x === b));
-  const other = b.dataset.amt === "other";
-  $("#other-wrap").hidden = !other;
-  if (other) { $("#other-amt").focus(); setAmount($("#other-amt").value); } else setAmount(b.dataset.amt);
+  const k = b.dataset.amt;
+  $("#other-wrap").hidden = k !== "other"; $("#more-wrap").hidden = k !== "more";
+  if (k === "other") { $("#other-amt").focus(); setAmount($("#other-amt").value); }
+  else if (k === "more") { setAmount(moreAmount()); }
+  else setAmount(k);
 }));
 $("#other-amt").addEventListener("input", (e) => setAmount(e.target.value));
+$("#more-n").addEventListener("input", () => setAmount(moreAmount()));
 $("#d-amount").addEventListener("input", (e) => {
   setAmount(e.target.value, true);
   const m = $$(".amt").find(x => x.dataset.amt == amount);
   $$(".amt").forEach(x => x.setAttribute("aria-pressed", m ? x === m : x.dataset.amt === "other"));
-  $("#other-wrap").hidden = !!m; if (!m) $("#other-amt").value = amount || "";
+  $("#other-wrap").hidden = !!m; $("#more-wrap").hidden = true; if (!m) $("#other-amt").value = amount || "";
 });
 
 // ---- Pay tabs ----
@@ -305,9 +370,9 @@ const DRAFT_FIELDS = ["d-name", "d-type", "d-email", "d-phone", "d-addr", "d-cit
 function saveDraft() { const o = { amount }; DRAFT_FIELDS.forEach(id => o[id] = $("#" + id).value); store.set(DRAFT, o); }
 function loadDraft() {
   const o = store.get(DRAFT); $("#d-date").value = today();
-  if (!o) return setAmount(1000);
+  if (!o) return setAmount(PER);
   DRAFT_FIELDS.forEach(id => { if (o[id]) $("#" + id).value = o[id]; });
-  const a = o.amount || 1000; const m = $$(".amt").find(x => x.dataset.amt == a);
+  const a = o.amount || PER; const m = $$(".amt").find(x => x.dataset.amt == a);
   if (m) m.click(); else { $$(".amt").find(x => x.dataset.amt === "other").click(); $("#other-amt").value = a; setAmount(a); }
   const p = Object.keys(MODE_FOR).find(k => MODE_FOR[k] === $("#d-mode").value) || "upi"; setPay(p, false); setRef();
 }
