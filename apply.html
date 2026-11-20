@@ -51,7 +51,7 @@
         <label for="f-occupation">Current occupation or studies<input id="f-occupation" name="occupation" maxlength="150" placeholder="e.g. MBBS 3rd year, nurse, teacher"></label>
         <label for="f-availability" data-for="volunteer member">Availability
           <select id="f-availability" name="availability">
-            <option value="">Choose one</option><option>Weekends</option><option>A few hours a week</option><option>Part-time</option><option>Full-time</option><option>For specific events only</option>
+            <option value="">Choose one</option><option value="Weekends">Weekends</option><option value="A few hours a week">A few hours a week</option><option value="Part-time">Part-time</option><option value="Full-time">Full-time</option><option value="For specific events only">For specific events only</option>
           </select></label>
       </div>
 
@@ -62,7 +62,7 @@
       <div class="row" data-for="intern">
         <label for="f-start">Preferred start date<input id="f-start" name="startDate" type="date"></label>
         <label for="f-duration">Duration
-          <select id="f-duration" name="duration"><option value="">Choose one</option><option>4 weeks</option><option>6–8 weeks</option><option>3 months</option><option>6 months</option></select></label>
+          <select id="f-duration" name="duration"><option value="">Choose one</option><option value="4 weeks">4 weeks</option><option value="6–8 weeks">6–8 weeks</option><option value="3 months">3 months</option><option value="6 months">6 months</option></select></label>
       </div>
       <label for="f-experience" data-for="member">Relevant experience <small>Roles, years, skills</small><textarea id="f-experience" name="experience" maxlength="1500"></textarea></label>
 
@@ -87,7 +87,8 @@
     </form>
   </div>
 </div></main>
-<footer class="footer"><div class="wrap">© 2026 Meeyam Health Foundation · <a href="index.html">meeyamhealth.org</a> · meeyamhealth@gmail.com</div></footer>
+<footer class="footer"><div class="wrap">Meeyam Health Foundation is a not-for-profit company registered under Section 8 of the Companies Act, 2013. CIN U88900PB2026NPL069882 · © 2026 Meeyam Health Foundation · <a href="index.html">meeyamhealth.org</a> · meeyamhealth@gmail.com</div></footer>
+<script src="site-tools.js" defer></script>
 
 <script type="module">
 import { db, configured, googleForms, $, $$, show, setupBanner } from "./portal.js";
